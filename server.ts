@@ -25,11 +25,18 @@ async function startServer() {
         return res.status(400).json({ error: 'مفتاح GEMINI_API_KEY غير متوفر في الإعدادات.' });
       }
 
-      const ai = new GoogleGenAI({ apiKey });
+      const ai = new GoogleGenAI({
+        apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          },
+        },
+      });
       const prompt = `المناسبة: ${occasion || 'عشاء فاخر'}\nالتفضيلات الشخصية: ${userPreference || 'أطباق مصريّة أصلية متوازنة'}\nالمتطلبات الغذائية: ${dietary || 'لا يوجد'}\nاقترح قائمة طعام متكاملة (مقبلات، طبق رئيسي، حلويات، ومشروب ملكي) من قائمة مطعم قصر الفيروز مع شرح جذاب ومحفز للشهية وسبب اختيارك للأطباق.`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3.6-flash',
         contents: prompt,
         config: {
           systemInstruction: `أنت المضيف الملكي "شيف قصر الفيروز" الخبير في المطبخ المصري الأصيل المعاصر بالزمالك، القاهرة. أسلوبك راقٍ ودافئ، مع استخدام مصطلحات ضيافة ملكية مصرية مثل (أهلاً بك في قصر الفيروز، يسعدنا إكرام ضيافتكم، طعم زمان بروح عصرية). قدّم التوصية بشكل منظم وممتع بأسلوب نقاط سهلة القراءة مع ذكر المكونات الفاخرة.`,
