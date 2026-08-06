@@ -1,0 +1,6 @@
+{
+  "name": "مطعم قصر الفيروز",
+  "description": "مطعم مصري راقي مع نظام حجز طاولات وقائمة طعام تفاعلية وتجربة طهي ملكية أصلية",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

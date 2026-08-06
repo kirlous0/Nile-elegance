@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@layer base {
+  html {
+    font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+    scroll-behavior: smooth;
+    direction: rtl;
+  }
+
+  body {
+    background-color: #0c0e12;
+    color: #f3f4f6;
+    overflow-x: hidden;
+  }
+
+  /* Strict rule enforcing rounded buttons - NO square buttons anywhere */
+  button, [role="button"], input[type="submit"], input[type="button"] {
+    border-radius: 9999px !important;
+  }
+}
+
+/* Custom Gold Accent Gradients & Glassmorphism */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #fce09b 0%, #dfb253 50%, #9e7526 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-bg-gradient {
+  background: linear-gradient(135deg, #dfb253 0%, #b8860b 100%);
+}
+
+.gold-border-glow {
+  box-shadow: 0 0 25px rgba(223, 178, 83, 0.15);
+}
+
+.royal-glass {
+  background: rgba(18, 22, 29, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(223, 178, 83, 0.18);
+}
+
+.amiri-font {
+  font-family: 'Amiri', serif;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #090a0d;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a2e19;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #dfb253;
+}
+
+/* Leaflet map dark mode styling overrides */
+.leaflet-container {
+  font-family: 'Cairo', sans-serif !important;
+  border-radius: 1.5rem;
+  z-index: 10;
+}
+.leaflet-popup-content-wrapper {
+  background: #161b22 !important;
+  color: #f3f4f6 !important;
+  border: 1px solid #dfb253;
+  border-radius: 1rem !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+}
+.leaflet-popup-tip {
+  background: #161b22 !important;
+}
