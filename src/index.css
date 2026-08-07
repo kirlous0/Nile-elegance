@@ -15,7 +15,7 @@
     overflow-x: hidden;
   }
 
-  /* Strict rule enforcing rounded buttons - NO square buttons anywhere */
+  /* Enforcing rounded buttons */
   button, [role="button"], input[type="submit"], input[type="button"] {
     border-radius: 9999px !important;
   }

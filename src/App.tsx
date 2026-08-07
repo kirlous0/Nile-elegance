@@ -71,31 +71,31 @@ export default function App() {
         onOpenCart={() => setCartOpen(true)}
       />
 
-      {/* Main Sections */}
+      {/* Main Content Sections */}
       <main>
-        {/* Hero Section */}
+        {/* Hero Banner Section */}
         <Hero
           onOpenReservation={scrollToReservation}
           onOpenAiSommelier={() => setAiModalOpen(true)}
         />
 
-        {/* Interactive Menu Section */}
+        {/* Menu Section */}
         <MenuSection
           onSelectDish={(dish) => setSelectedDish(dish)}
           onQuickAdd={(dish) => handleAddToCart(dish, 1)}
           onOpenAiSommelier={() => setAiModalOpen(true)}
         />
 
-        {/* Story & Fine Dining Experience */}
+        {/* Story & Heritage */}
         <StoryExperience />
 
-        {/* Interactive Table Reservation System */}
+        {/* Real-time Table Reservation System */}
         <ReservationSection />
 
-        {/* Interactive Location & Google/Leaflet Map Section */}
+        {/* Interactive Location & Leaflet Map */}
         <InteractiveMapSection />
 
-        {/* Guest Reviews & Community Section */}
+        {/* Guest Reviews & Community */}
         <ReviewsSection />
       </main>
 

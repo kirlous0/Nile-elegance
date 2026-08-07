@@ -1,118 +1,142 @@
 import React from 'react';
-import { Calendar, Utensils, MapPin, Sparkles, Award, Star, Compass } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Sparkles, Calendar, UtensilsCrossed, Award, MapPin, Star } from 'lucide-react';
+import { RESTAURANT_INFO } from '../data/restaurantInfo';
+import { SafeImage } from './SafeImage';
 
 interface HeroProps {
   onOpenReservation: () => void;
   onOpenAiSommelier: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenReservation, onOpenAiSommelier }) => {
+export const Hero: React.FC<HeroProps> = ({
+  onOpenReservation,
+  onOpenAiSommelier,
+}) => {
+  const scrollToMenu = () => {
+    const element = document.getElementById('menu');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center pt-24 pb-16 overflow-hidden">
-      {/* Background Image with Dark Royal Overlay */}
+    <section className="relative min-h-screen pt-28 pb-16 flex items-center justify-center overflow-hidden">
+      {/* Background Image Container with Gradient Overlay */}
       <div className="absolute inset-0 z-0">
-        <img
-          src="/src/assets/images/egyptian_restaurant_hero_1786055022971.jpg"
+        <SafeImage
+          src={RESTAURANT_INFO.heroImage}
           alt="مطعم قصر الفيروز بالزمالك"
-          className="w-full h-full object-cover object-center scale-105 filter brightness-75"
+          className="w-full h-full object-cover scale-105 filter brightness-75"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/40"></div>
-        <div className="absolute inset-0 bg-radial-vignette opacity-80 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/40" />
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-slate-950/50 to-slate-950" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 font-bold text-xs sm:text-sm mb-6 shadow-xl backdrop-blur-md"
-        >
-          <Award className="w-4 h-4 text-amber-400" />
-          <span>أفخم مطعم مصري على كورنيش الزمالك 👑</span>
-        </motion.div>
+      {/* Decorative Golden Ornaments Background */}
+      <div className="absolute top-1/4 right-10 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-80 h-80 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
 
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-4xl sm:text-6xl md:text-7xl font-black text-white mb-6 leading-tight amiri-font tracking-tight max-w-5xl mx-auto"
-        >
-          أصالة المطبخ المصري الفاخر <br />
-          <span className="gold-gradient-text">بروح ملكية على ضفاف النيل</span>
-        </motion.h1>
+      {/* Content Container */}
+      <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
+        {/* Rating & Location Badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full royal-glass border border-amber-500/30 text-amber-300 text-xs sm:text-sm font-medium mb-6 shadow-lg shadow-amber-500/10">
+          <div className="flex items-center text-amber-400">
+            <Star className="w-3.5 h-3.5 fill-amber-400" />
+            <Star className="w-3.5 h-3.5 fill-amber-400" />
+            <Star className="w-3.5 h-3.5 fill-amber-400" />
+            <Star className="w-3.5 h-3.5 fill-amber-400" />
+            <Star className="w-3.5 h-3.5 fill-amber-400" />
+          </div>
+          <span className="text-slate-300">|</span>
+          <span className="flex items-center gap-1 text-slate-200">
+            <MapPin className="w-3.5 h-3.5 text-amber-400" />
+            أبو الفدا، الزمالك • إطلالة على النيل
+          </span>
+        </div>
 
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-slate-300 text-base sm:text-xl max-w-3xl mx-auto mb-10 leading-relaxed font-light"
-        >
-          نأخذكم في رحلة طهي غنية بنكهات الزمان؛ من المشويات الفاخرة المتبلة بأعشاب بلادنا والطواجن الفخارية المعتقة، إلى الفطير المشلتت الذهبي والحلويات الشرقية المحضرة على أيدي كبار الطهاة.
-        </motion.p>
+        {/* Main Heading */}
+        <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold amiri-font leading-tight text-slate-100 mb-6">
+          أصالة المطبخ المصري الملكي <br />
+          <span className="gold-gradient-text">بروح معاصرة وفاخرة</span>
+        </h1>
 
-        {/* Action Buttons - Strict Rounded Shape Rule */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="flex flex-wrap items-center justify-center gap-4 max-w-2xl mx-auto"
-        >
+        {/* Subtitle */}
+        <p className="max-w-2xl mx-auto text-base sm:text-lg text-slate-300 leading-relaxed font-sans mb-10">
+          في قصر الفيروز، نعيد كتابة تاريخ الضيافة المصرية الأصيلة بطواجن الفخار المعتقة، ومشويات الفحم الصافي، ومقادير السمن البلدي الفلاحي النقي على ضفاف نيل الزمالك.
+        </p>
+
+        {/* Action Buttons Group */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+          {/* Main CTA: Reserve */}
           <button
             onClick={onOpenReservation}
-            className="px-8 py-4 rounded-full gold-bg-gradient text-slate-950 font-black text-base shadow-2xl shadow-amber-500/30 hover:scale-105 hover:brightness-110 transition-all flex items-center gap-2.5"
+            className="w-full sm:w-auto px-8 py-4 rounded-full gold-bg-gradient text-slate-950 font-bold text-base shadow-2xl shadow-amber-500/25 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2"
           >
             <Calendar className="w-5 h-5" />
-            <span>احجز طاولتك الملكية</span>
+            <span>احجز طاولتك بالفيو الملكي</span>
           </button>
 
-          <a
-            href="#menu"
-            className="px-8 py-4 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-amber-500/30 text-white font-extrabold text-base transition-all hover:border-amber-500/60 flex items-center gap-2"
-          >
-            <Utensils className="w-5 h-5 text-amber-400" />
-            <span>قائمة الطعام التفاعلية</span>
-          </a>
-
+          {/* Secondary CTA: AI Sommelier */}
           <button
             onClick={onOpenAiSommelier}
-            className="px-6 py-4 rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold text-sm transition-all flex items-center gap-2"
+            className="w-full sm:w-auto px-7 py-4 rounded-full royal-glass border border-amber-500/40 text-amber-300 hover:text-amber-200 font-semibold text-base transition-all duration-300 flex items-center justify-center gap-2 hover:border-amber-400 shadow-xl"
           >
-            <Sparkles className="w-4 h-4 text-amber-400 animate-spin" />
-            <span>اقتراح وجبة بالذكاء الاصطناعي</span>
+            <Sparkles className="w-5 h-5 text-amber-400 animate-pulse" />
+            <span>استشر الشيف الذكي (AI)</span>
           </button>
-        </motion.div>
 
-        {/* Floating Quick Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto border-t border-amber-500/20 pt-8"
-        >
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-900 backdrop-blur-md">
-            <div className="text-2xl sm:text-3xl font-black text-amber-400 flex items-center justify-center gap-1">
-              <span>4.9</span>
-              <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+          {/* View Menu */}
+          <button
+            onClick={scrollToMenu}
+            className="w-full sm:w-auto px-6 py-4 rounded-full bg-slate-900/80 hover:bg-slate-900 border border-slate-800 text-slate-300 font-medium text-base transition-all duration-200 flex items-center justify-center gap-2"
+          >
+            <UtensilsCrossed className="w-5 h-5 text-amber-400" />
+            <span>تصفح قائمة الطعام</span>
+          </button>
+        </div>
+
+        {/* Quick Highlights / Feature Pills */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-8 border-t border-slate-800/80">
+          <div className="p-3 rounded-2xl royal-glass flex items-center gap-3 text-right">
+            <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-lg">
+              ✨
             </div>
-            <span className="text-xs text-slate-400">تقييم أكثر من 2,400 ضيف</span>
+            <div>
+              <h4 className="text-sm font-bold text-slate-100">سمن بلدي 100%</h4>
+              <p className="text-xs text-slate-400">مكونات طازجة وفاخرة</p>
+            </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-900 backdrop-blur-md">
-            <div className="text-2xl sm:text-3xl font-black text-amber-400">100%</div>
-            <span className="text-xs text-slate-400">مكونات ومواشي بلدي طازجة</span>
+          <div className="p-3 rounded-2xl royal-glass flex items-center gap-3 text-right">
+            <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-lg">
+              🌅
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-100">شرفة النيل</h4>
+              <p className="text-xs text-slate-400">إطلالة ساحرة بالزمالك</p>
+            </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-900 backdrop-blur-md">
-            <div className="text-2xl sm:text-3xl font-black text-amber-400">شرفة النيل</div>
-            <span className="text-xs text-slate-400">جلسات خارجية بإطلالة ساحرة</span>
+          <div className="p-3 rounded-2xl royal-glass flex items-center gap-3 text-right">
+            <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-lg">
+              🏺
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-100">طواجن فخار</h4>
+              <p className="text-xs text-slate-400">طعام معتق كالأزمنة</p>
+            </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-900 backdrop-blur-md">
-            <div className="text-2xl sm:text-3xl font-black text-amber-400">صف مجاني</div>
-            <span className="text-xs text-slate-400">Valet خاص للسيارات بالزمالك</span>
+          <div className="p-3 rounded-2xl royal-glass flex items-center gap-3 text-right">
+            <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-lg">
+              <Award className="w-5 h-5 text-amber-400" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-100">خدمة ملكية</h4>
+              <p className="text-xs text-slate-400">ضيافة مصرية رفيعة</p>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

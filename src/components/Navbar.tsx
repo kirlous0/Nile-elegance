@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Utensils, Calendar, MapPin, Menu, X, Phone, ShoppingBag, Crown } from 'lucide-react';
+import { ShoppingBag, Sparkles, Calendar, Menu, X, Phone, Compass, UtensilsCrossed } from 'lucide-react';
+import { RESTAURANT_INFO } from '../data/restaurantInfo';
 
 interface NavbarProps {
   onOpenAiSommelier: () => void;
@@ -14,164 +15,169 @@ export const Navbar: React.FC<NavbarProps> = ({
   selectedItemsCount,
   onOpenCart,
 }) => {
-  const [scrolled, setScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 30) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 40);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { name: 'الرئيسية', href: '#hero' },
-    { name: 'قائمة الطعام', href: '#menu' },
-    { name: 'حجز طاولة', href: '#reservation' },
-    { name: 'الموقع والخريطة', href: '#location' },
-    { name: 'قصتنا', href: '#story' },
-    { name: 'آراء الضيوف', href: '#reviews' },
-  ];
+  const scrollToSection = (id: string) => {
+    setMobileMenuOpen(false);
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        scrolled
-          ? 'bg-slate-950/90 backdrop-blur-xl border-b border-amber-500/20 py-3 shadow-2xl'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? 'bg-slate-950/90 backdrop-blur-md border-b border-amber-500/20 py-3 shadow-2xl'
           : 'bg-gradient-to-b from-slate-950/90 via-slate-950/40 to-transparent py-5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        {/* Logo */}
-        <a href="#hero" className="flex items-center gap-3 group">
-          <div className="w-11 h-11 rounded-full gold-bg-gradient flex items-center justify-center text-slate-950 shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
-            <Crown className="w-6 h-6" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-xl font-black text-white tracking-wide amiri-font group-hover:text-amber-400 transition-colors">
-              قصر الفيروز
-            </span>
-            <span className="text-[10px] text-amber-400/90 uppercase tracking-widest font-semibold">
-              EGYPTIAN FINE DINING
-            </span>
-          </div>
-        </a>
-
-        {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className="text-slate-300 hover:text-amber-400 font-semibold text-sm transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-amber-400 after:scale-x-0 hover:after:scale-x-100 after:transition-transform"
-            >
-              {link.name}
-            </a>
-          ))}
-        </nav>
-
-        {/* Action Buttons */}
-        <div className="hidden md:flex items-center gap-3">
-          {/* AI Assistant Button */}
-          <button
-            onClick={onOpenAiSommelier}
-            className="px-4 py-2.5 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-amber-500/30 text-amber-300 font-bold text-xs flex items-center gap-2 hover:border-amber-500/60 transition-all shadow-md"
-          >
-            <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
-            <span>المساعد الذكي</span>
-          </button>
-
-          {/* Table Selection / Cart Button */}
-          <button
-            onClick={onOpenCart}
-            className="relative p-2.5 rounded-full bg-slate-900 border border-slate-800 text-slate-200 hover:text-amber-400 transition-colors"
-            title="الأطباق المختارة للطاولة"
-          >
-            <ShoppingBag className="w-5 h-5" />
-            {selectedItemsCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center animate-bounce">
-                {selectedItemsCount}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between">
+          {/* Logo & Brand Name */}
+          <div className="flex items-center space-x-3 space-x-reverse cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <div className="w-10 h-10 rounded-full gold-bg-gradient p-0.5 flex items-center justify-center shadow-lg shadow-amber-500/20">
+              <div className="w-full h-full bg-slate-950 rounded-full flex items-center justify-center">
+                <span className="text-amber-400 font-bold text-xl amiri-font">ف</span>
+              </div>
+            </div>
+            <div>
+              <span className="text-xl sm:text-2xl font-bold gold-gradient-text amiri-font tracking-wide block">
+                {RESTAURANT_INFO.name}
               </span>
-            )}
-          </button>
-
-          {/* Book Table Primary Button */}
-          <button
-            onClick={onOpenReservation}
-            className="px-6 py-2.5 rounded-full gold-bg-gradient text-slate-950 font-extrabold text-sm hover:brightness-110 transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2"
-          >
-            <Calendar className="w-4 h-4" />
-            <span>حجز طاولة ملكية</span>
-          </button>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <div className="flex md:hidden items-center gap-2">
-          <button
-            onClick={onOpenCart}
-            className="relative p-2 rounded-full bg-slate-900 border border-slate-800 text-slate-200"
-          >
-            <ShoppingBag className="w-5 h-5" />
-            {selectedItemsCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 text-slate-950 font-bold text-[10px] flex items-center justify-center">
-                {selectedItemsCount}
+              <span className="text-[10px] text-amber-300/70 tracking-widest uppercase block -mt-1 font-sans">
+                Zamalek • Cairo
               </span>
-            )}
-          </button>
+            </div>
+          </div>
 
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-full bg-slate-900 text-slate-200 border border-slate-800"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-slate-950/95 border-b border-amber-500/20 px-4 pt-4 pb-6 space-y-3">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-slate-200 hover:text-amber-400 font-bold text-sm border-b border-slate-900"
-            >
-              {link.name}
-            </a>
-          ))}
-
-          <div className="pt-2 space-y-2">
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-center space-x-8 space-x-reverse text-sm font-medium">
             <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenAiSommelier();
-              }}
-              className="w-full py-3 rounded-full bg-slate-900 text-amber-300 font-bold text-xs flex items-center justify-center gap-2 border border-amber-500/30"
+              onClick={() => scrollToSection('menu')}
+              className="text-slate-200 hover:text-amber-400 transition-colors flex items-center gap-1.5"
             >
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>مساعد الفيروز للذكاء الاصطناعي</span>
+              <UtensilsCrossed className="w-4 h-4 text-amber-400" />
+              قائمة الطعام
+            </button>
+            <button
+              onClick={() => scrollToSection('story')}
+              className="text-slate-200 hover:text-amber-400 transition-colors"
+            >
+              قصتنا وخبراتنا
+            </button>
+            <button
+              onClick={() => scrollToSection('reservation')}
+              className="text-slate-200 hover:text-amber-400 transition-colors flex items-center gap-1.5"
+            >
+              <Calendar className="w-4 h-4 text-amber-400" />
+              حجز الطاولات
+            </button>
+            <button
+              onClick={() => scrollToSection('location')}
+              className="text-slate-200 hover:text-amber-400 transition-colors flex items-center gap-1.5"
+            >
+              <Compass className="w-4 h-4 text-amber-400" />
+              الموقع والخريطة
+            </button>
+          </nav>
+
+          {/* Action Buttons */}
+          <div className="flex items-center space-x-3 space-x-reverse">
+            {/* AI Sommelier Button */}
+            <button
+              onClick={onOpenAiSommelier}
+              className="relative group px-3.5 py-2 rounded-full royal-glass border border-amber-500/30 text-amber-300 hover:border-amber-400 transition-all duration-300 flex items-center gap-2 text-xs sm:text-sm font-semibold shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20"
+            >
+              <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+              <span className="hidden sm:inline">مستشار الطعام الذكي</span>
+              <span className="sm:hidden">الشيف الذكي</span>
             </button>
 
+            {/* Cart Button */}
             <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenReservation();
-              }}
-              className="w-full py-3 rounded-full gold-bg-gradient text-slate-950 font-bold text-sm flex items-center justify-center gap-2 shadow-lg"
+              onClick={onOpenCart}
+              aria-label="فتح حقيبة الطلبات"
+              className="relative p-2.5 rounded-full bg-slate-900 border border-slate-800 text-slate-200 hover:text-amber-400 hover:border-amber-500/40 transition-all duration-200"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              {selectedItemsCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full gold-bg-gradient text-slate-950 font-bold text-xs flex items-center justify-center animate-bounce shadow-md">
+                  {selectedItemsCount}
+                </span>
+              )}
+            </button>
+
+            {/* Reserve Button */}
+            <button
+              onClick={onOpenReservation}
+              className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full gold-bg-gradient text-slate-950 font-bold text-sm shadow-xl shadow-amber-500/20 hover:brightness-110 active:scale-95 transition-all duration-200"
             >
               <Calendar className="w-4 h-4" />
-              <span>حجز طاولة الآن</span>
+              <span>احجز طاولتك</span>
+            </button>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-full bg-slate-900 text-slate-300 hover:text-amber-400"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
-      )}
+
+        {/* Mobile Dropdown Menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden mt-4 rounded-2xl royal-glass p-5 border border-amber-500/20 shadow-2xl flex flex-col gap-4 animate-in fade-in duration-200">
+            <button
+              onClick={() => scrollToSection('menu')}
+              className="text-right py-2 text-slate-200 hover:text-amber-400 border-b border-slate-800 flex items-center justify-between"
+            >
+              <span>قائمة الطعام الفاخرة</span>
+              <UtensilsCrossed className="w-4 h-4 text-amber-400" />
+            </button>
+            <button
+              onClick={() => scrollToSection('story')}
+              className="text-right py-2 text-slate-200 hover:text-amber-400 border-b border-slate-800"
+            >
+              تجربة قصر الفيروز وقصتنا
+            </button>
+            <button
+              onClick={() => scrollToSection('reservation')}
+              className="text-right py-2 text-slate-200 hover:text-amber-400 border-b border-slate-800 flex items-center justify-between"
+            >
+              <span>حجز الطاولات والأماكن</span>
+              <Calendar className="w-4 h-4 text-amber-400" />
+            </button>
+            <button
+              onClick={() => scrollToSection('location')}
+              className="text-right py-2 text-slate-200 hover:text-amber-400 border-b border-slate-800 flex items-center justify-between"
+            >
+              <span>الموقع والوصول</span>
+              <Compass className="w-4 h-4 text-amber-400" />
+            </button>
+
+            <a
+              href={`tel:${RESTAURANT_INFO.phone.replace(/\s+/g, '')}`}
+              className="flex items-center justify-center gap-2 py-3 rounded-full bg-slate-900 border border-amber-500/30 text-amber-300 font-semibold text-sm"
+            >
+              <Phone className="w-4 h-4" />
+              <span>اتصل بنا: {RESTAURANT_INFO.phone}</span>
+            </a>
+          </div>
+        )}
+      </div>
     </header>
   );
 };

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { MENU_ITEMS, MENU_CATEGORIES, MenuItem } from '../data/menuData';
-import { Search, Star, Clock, Flame, Plus, Sparkles, Filter, Utensils } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState, useMemo } from 'react';
+import { Search, Sparkles, Plus, Star, Clock, Flame, Info } from 'lucide-react';
+import { MENU_CATEGORIES, MENU_ITEMS, MenuItem } from '../data/menuData';
+import { SafeImage } from './SafeImage';
 
 interface MenuSectionProps {
   onSelectDish: (dish: MenuItem) => void;
@@ -14,164 +14,118 @@ export const MenuSection: React.FC<MenuSectionProps> = ({
   onQuickAdd,
   onOpenAiSommelier,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'rating'>('featured');
 
-  const filteredItems = MENU_ITEMS.filter((item) => {
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-    const matchesSearch =
-      item.name.includes(searchQuery) ||
-      item.englishName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description.includes(searchQuery) ||
-      item.ingredients.some((ing) => ing.includes(searchQuery));
-    return matchesCategory && matchesSearch;
-  });
+  const filteredItems = useMemo(() => {
+    return MENU_ITEMS.filter((item) => {
+      const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+      const matchesSearch =
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.englishName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.ingredients.some((ing) => ing.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchesCategory && matchesSearch;
+    }).sort((a, b) => {
+      if (sortBy === 'price-asc') return a.price - b.price;
+      if (sortBy === 'price-desc') return b.price - a.price;
+      if (sortBy === 'rating') return b.rating - a.rating;
+      return 0; // default featured order
+    });
+  }, [selectedCategory, searchQuery, sortBy]);
 
   return (
-    <section id="menu" className="py-24 bg-slate-950 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
+    <section id="menu" className="py-20 relative bg-slate-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm font-semibold mb-4"
-          >
-            <Utensils className="w-4 h-4" />
-            <span>قائمة الطعام الفاخرة</span>
-          </motion.div>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-5xl font-extrabold text-white mb-6 amiri-font"
-          >
-            تذوق عظمة <span className="gold-gradient-text">الأطباق المصرية الملكية</span>
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-slate-300 text-base sm:text-lg leading-relaxed"
-          >
-            تتميز القائمة بمكونات طازجة بلدي 100%، وتتبيلات سرية وراثية مجهزة بالفحم البلدي والسمن الصافي لتقدم لكم وجبة لا تُنسى.
-          </motion.p>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full royal-glass border border-amber-500/30 text-amber-300 text-xs font-semibold mb-3">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>قائمة قصر الفيروز الملكية</span>
+          </div>
+          <h2 className="text-3xl sm:text-5xl font-extrabold amiri-font gold-gradient-text mb-4">
+            نخبة الأطباق وطواجن الفخار المعتقة
+          </h2>
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+            استمتع بأشهر الوصفات المصرية الأصيلة المطهوة بكل عناية تحت إشراف نخبة من كبار طهاة القاهرة
+          </p>
         </div>
 
-        {/* Search & AI Recommendation Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10 max-w-4xl mx-auto">
+        {/* Search & AI Recommendation Banner */}
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mb-8">
           {/* Search Input */}
-          <div className="relative w-full md:flex-1">
+          <div className="relative w-full lg:w-96">
+            <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-amber-500/60" />
             <input
               type="text"
+              placeholder="ابحث عن طبق، مكونات (بط، فريك، ملوخية)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ابحث عن طبقك المفضل، مكونات، أو مشويات..."
-              className="w-full bg-slate-900 border border-slate-800 rounded-full py-3.5 pr-12 pl-6 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-amber-500 shadow-inner"
+              className="w-full pr-12 pl-4 py-3 rounded-full bg-slate-900 border border-slate-800 focus:border-amber-500 text-slate-100 placeholder-slate-500 text-sm outline-none transition-all shadow-inner"
             />
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-amber-400 pointer-events-none" />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-amber-400"
+              >
+                مسح
+              </button>
+            )}
           </div>
 
-          {/* AI Helper Button */}
-          <button
-            onClick={onOpenAiSommelier}
-            className="w-full md:w-auto px-6 py-3.5 rounded-full bg-gradient-to-r from-amber-500/20 to-amber-600/20 hover:from-amber-500/30 hover:to-amber-600/30 border border-amber-500/40 text-amber-300 font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-md shrink-0"
-          >
-            <Sparkles className="w-4 h-4 text-amber-400 animate-spin" />
-            <span>مستشار الوجبات بالذكاء الاصطناعي</span>
-          </button>
-        </div>
-
-        {/* Categories Horizontal Tabs */}
-        <div className="flex items-center justify-start sm:justify-center gap-2.5 overflow-x-auto pb-4 mb-12 scrollbar-none">
-          {MENU_CATEGORIES.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-all duration-300 flex items-center gap-2 ${
-                selectedCategory === cat.id
-                  ? 'gold-bg-gradient text-slate-950 shadow-lg shadow-amber-500/20 scale-105'
-                  : 'bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-800'
-              }`}
-            >
-              <span>{cat.name}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Menu Items Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredItems.map((item) => (
-            <motion.div
-              key={item.id}
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-slate-900/90 border border-slate-800 hover:border-amber-500/40 rounded-3xl overflow-hidden shadow-xl hover:shadow-amber-500/10 transition-all duration-300 flex flex-col group"
-            >
-              {/* Image Banner */}
-              <div
-                onClick={() => onSelectDish(item)}
-                className="relative h-48 sm:h-52 overflow-hidden cursor-pointer"
+          {/* Sort Dropdown & AI Banner */}
+          <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-between lg:justify-end">
+            <div className="flex items-center gap-2 text-xs text-slate-400">
+              <span>ترتيب حسب:</span>
+              <select
+                value={sortBy}
+                onChange={(e: any) => setSortBy(e.target.value)}
+                className="bg-slate-900 border border-slate-800 text-amber-300 text-xs rounded-full px-3 py-2 outline-none cursor-pointer hover:border-amber-500/40"
               >
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                <option value="featured">الأكثر تميزاً (مقترحات الشيف)</option>
+                <option value="rating">الأعلى تقييماً ⭐</option>
+                <option value="price-asc">الأقل سعراً</option>
+                <option value="price-desc">الأعلى سعراً</option>
+              </select>
+            </div>
 
-                {item.badge && (
-                  <span className="absolute top-3 right-3 px-3 py-1 rounded-full gold-bg-gradient text-slate-950 font-bold text-[11px] shadow-md">
-                    {item.badge}
-                  </span>
-                )}
-
-                <div className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-amber-400 text-xs font-bold border border-slate-800">
-                  <Star className="w-3.5 h-3.5 fill-amber-400" />
-                  <span>{item.rating}</span>
-                </div>
-              </div>
-
-              {/* Content Body */}
-              <div className="p-5 flex-1 flex flex-col justify-between text-right">
-                <div onClick={() => onSelectDish(item)} className="cursor-pointer space-y-2">
-                  <h3 className="text-lg font-bold text-white group-hover:text-amber-400 transition-colors amiri-font">
-                    {item.name}
-                  </h3>
-                  <p className="text-slate-400 text-xs line-clamp-2 leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-
-                {/* Price & Add Button Bar */}
-                <div className="pt-4 border-t border-slate-800/80 mt-4 flex items-center justify-between gap-2">
-                  <div>
-                    <span className="text-xs text-slate-400 block">السعر</span>
-                    <span className="text-base font-extrabold text-amber-400">{item.price} ج.م</span>
-                  </div>
-
-                  <button
-                    onClick={() => onQuickAdd(item)}
-                    className="px-4 py-2 rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 hover:text-amber-200 text-xs font-bold flex items-center gap-1.5 transition-all"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>أضف للطاولة</span>
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+            <button
+              onClick={onOpenAiSommelier}
+              className="px-4 py-2 rounded-full gold-bg-gradient text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/15 hover:brightness-110 transition-all"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>مساعد الشيف الملكي الذكي</span>
+            </button>
+          </div>
         </div>
 
-        {filteredItems.length === 0 && (
-          <div className="text-center py-16 bg-slate-900/40 rounded-3xl border border-slate-800 max-w-lg mx-auto">
-            <p className="text-slate-400 text-base mb-4">لم نجد أي طبق يطابق خيارات البحث الحالية.</p>
+        {/* Category Tabs */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-10 scrollbar-none">
+          {MENU_CATEGORIES.map((cat) => {
+            const isActive = selectedCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 flex items-center gap-2 ${
+                  isActive
+                    ? 'gold-bg-gradient text-slate-950 shadow-lg shadow-amber-500/20 scale-105'
+                    : 'bg-slate-900/90 text-slate-300 hover:text-amber-300 hover:bg-slate-800 border border-slate-800'
+                }`}
+              >
+                <span>{cat.icon}</span>
+                <span>{cat.name}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Menu Grid */}
+        {filteredItems.length === 0 ? (
+          <div className="text-center py-16 royal-glass rounded-3xl border border-slate-800 p-8">
+            <p className="text-amber-400 font-bold text-lg mb-2">لم نجد أطباق مطابقة لـ "{searchQuery}"</p>
+            <p className="text-slate-400 text-sm mb-6">جرب البحث بكلمات أخرى مثل "بط"، "كباب"، "ملوخية"، أو مسح الفلتر.</p>
             <button
               onClick={() => {
                 setSearchQuery('');
@@ -179,8 +133,103 @@ export const MenuSection: React.FC<MenuSectionProps> = ({
               }}
               className="px-6 py-2.5 rounded-full gold-bg-gradient text-slate-950 font-bold text-xs"
             >
-              عرض القائمة الكاملة
+              عرض كافة الأطباق
             </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {filteredItems.map((dish) => (
+              <div
+                key={dish.id}
+                className="group relative rounded-3xl royal-glass border border-slate-800/80 hover:border-amber-500/40 transition-all duration-300 overflow-hidden flex flex-col justify-between hover:-translate-y-1.5 shadow-xl hover:shadow-2xl hover:shadow-amber-500/10"
+              >
+                {/* Dish Image with SafeImage Loader */}
+                <div className="relative h-56 w-full cursor-pointer overflow-hidden" onClick={() => onSelectDish(dish)}>
+                  <SafeImage
+                    src={dish.image}
+                    alt={dish.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/30" />
+
+                  {/* Badge */}
+                  {dish.badge && (
+                    <span className="absolute top-3 right-3 px-3 py-1 rounded-full gold-bg-gradient text-slate-950 font-bold text-[11px] shadow-lg">
+                      {dish.badge}
+                    </span>
+                  )}
+
+                  {/* Prep Time & Rating */}
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-slate-200">
+                    <span className="flex items-center gap-1 bg-slate-950/75 backdrop-blur-md px-2.5 py-1 rounded-full border border-amber-500/20 text-amber-300">
+                      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      <span>{dish.rating}</span>
+                      <span className="text-slate-400">({dish.reviewsCount})</span>
+                    </span>
+
+                    <span className="flex items-center gap-1 bg-slate-950/75 backdrop-blur-md px-2.5 py-1 rounded-full text-slate-300">
+                      <Clock className="w-3.5 h-3.5 text-amber-400" />
+                      <span>{dish.prepTime}</span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Dish Content */}
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <h3
+                        onClick={() => onSelectDish(dish)}
+                        className="text-lg font-bold amiri-font text-slate-100 hover:text-amber-400 cursor-pointer transition-colors leading-snug"
+                      >
+                        {dish.name}
+                      </h3>
+                      {dish.spiceLevel && dish.spiceLevel > 0 ? (
+                        <div className="flex items-center text-red-400 text-xs shrink-0" title={`مستوى الفلفل: ${dish.spiceLevel}`}>
+                          {Array.from({ length: dish.spiceLevel }).map((_, i) => (
+                            <Flame key={i} className="w-3.5 h-3.5 fill-red-500 text-red-500" />
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+
+                    <p className="text-xs text-amber-400/80 font-mono mb-2">{dish.englishName}</p>
+
+                    <p className="text-slate-300 text-xs leading-relaxed line-clamp-2 mb-4">
+                      {dish.description}
+                    </p>
+                  </div>
+
+                  {/* Price & Actions */}
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+                    <div>
+                      <span className="text-slate-400 text-[11px] block">السعر</span>
+                      <span className="text-xl font-black gold-gradient-text amiri-font">
+                        {dish.price} <span className="text-xs font-sans text-amber-300 font-normal">ج.م</span>
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => onSelectDish(dish)}
+                        className="p-2 rounded-full bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-amber-400 border border-slate-800 text-xs transition-colors"
+                        title="تفاصيل المكونات والقيمة الغذائية"
+                      >
+                        <Info className="w-4 h-4" />
+                      </button>
+
+                      <button
+                        onClick={() => onQuickAdd(dish)}
+                        className="px-4 py-2 rounded-full gold-bg-gradient text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md hover:brightness-110 active:scale-95 transition-all"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>إضافة للطلب</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
